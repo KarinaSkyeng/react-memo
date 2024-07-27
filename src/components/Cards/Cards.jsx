@@ -42,7 +42,7 @@ function getTimerValue(startDate, endDate) {
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
-  const { tries, isEasyMode } = useContext(EasyContext);
+  const { tries, setTries, isEasyMode } = useContext(EasyContext);
   // console.log(isEasyMode);
   // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
   const [cards, setCards] = useState([]);
@@ -76,6 +76,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setGameEndDate(null);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
+    setTries(3); // Сброс количества попыток при перезапуске игры
   }
 
   /**
@@ -130,7 +131,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (playerLost) {
-      finishGame(STATUS_LOST);
+      setTries(prevTries => prevTries - 1);
+      if (tries - 1 <= 0) {
+        finishGame(STATUS_LOST);
+      } else {
+        setCards(cards.map(card => ({ ...card, open: false }))); // Закрываем карты без пары
+      }
       return;
     }
 
