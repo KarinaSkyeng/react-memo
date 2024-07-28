@@ -1,27 +1,34 @@
 .container {
+  font-family: 'Roboto', sans-serif;
+
   width: 100%;
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+  }
 
 .modal {
-  width: 480px;
-  height: 459px;
-  border-radius: 12px;
   background: #c2f5ff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  width: 480px;
+  height: 529px;
+  top: 122px;
+  left: 272px;
+  gap: 0px;
+  border-radius: 12px;
+  opacity: 0px;
 }
 
 .title {
   color: #004980;
   text-align: center;
   font-variant-numeric: lining-nums proportional-nums;
-  font-family: StratosSkyeng;
+  font-family: Roboto;
   font-size: 40px;
   font-style: normal;
   font-weight: 400;
@@ -33,7 +40,16 @@
   flex-direction: row;
   gap: 26px;
   margin-top: 48px;
-  margin-bottom: 28px;
+  margin-bottom: 28px;  
+
+  color: #0080C1;
+  text-align: center;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-family: Roboto;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 48px;
 }
 
 .level {
@@ -46,12 +62,28 @@
 
   border-radius: 12px;
   background: #fff;
+
+  cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  border: 2px solid transparent;  
+  transition: border-color 0.1s, background-color 0.1s;
+}
+
+.level:hover {
+  border-color: #aaa;
+}
+
+.selected {
+  text-color: #004980;
+  border-color: #B1B1B1;
+  background-color: #ddd;
 }
 
 .levelLink {
   color: #0080c1;
   text-align: center;
-  font-family: StratosSkyeng;
+  font-family: Roboto;
   font-size: 64px;
   font-style: normal;
   font-weight: 400;
@@ -61,4 +93,47 @@
 
 .levelLink:visited {
   color: #0080c1;
+}
+
+.labelName {
+  display: flex;
+  flex-direction: row-reverse;
+
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+  text-align: center; 
+  gap: 10px; 
+}
+
+.easyModeCheckbox {
+  width: 30px;
+  height: 29px;
+  top: 439px;
+  left: 353px;
+  gap: 0px;
+  border-radius: 4px;
+  border: none;
+  opacity: 0px;
+}
+
+.startButton {
+  margin-top: 28px;
+  margin-bottom: 28px;
+  width: 276px;
+  height: 45px;
+  top: 508px;
+  left: 375px;
+  border-radius: 12px;
+  border: none;
+  opacity: 0px;
+  background-color: #7AC100;
+
+  font-family: Roboto;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+  text-align: center;
+  color: #FFFFFF;
 }
