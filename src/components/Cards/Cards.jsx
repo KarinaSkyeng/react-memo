@@ -131,11 +131,29 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (playerLost) {
-      setTries(prevTries => prevTries - 1);
-      if (tries - 1 <= 0) {
-        finishGame(STATUS_LOST);
+      if (isEasyMode) {
+        setTries(prevTries => prevTries - 1);
+        if (tries - 1 <= 0) {
+          finishGame(STATUS_LOST);
+        } else {
+          // Закрываем только карты без пары
+          setTimeout(() => {
+            setCards(
+              nextCards.map(card =>
+                openCardsWithoutPair.some(openCard => openCard.id === card.id) ? { ...card, open: false } : card,
+              ),
+            );
+          }, 1000); // Задержка в 1 секунду, чтобы игрок успел увидеть вторую карту
+        }
       } else {
-        setCards(cards.map(card => ({ ...card, open: false }))); // Закрываем карты без пары
+        // Сложный режим: закрываем только карты без пары, не уменьшаем количество попыток
+        setTimeout(() => {
+          setCards(
+            nextCards.map(card =>
+              openCardsWithoutPair.some(openCard => openCard.id === card.id) ? { ...card, open: false } : card,
+            ),
+          );
+        }, 1000); // Задержка в 1 секунду, чтобы игрок успел увидеть вторую карту
       }
       return;
     }
