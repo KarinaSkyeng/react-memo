@@ -147,17 +147,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         }
       } else {
         // Сложный режим: закрываем только карты без пары, не уменьшаем количество попыток
-        setTimeout(() => {
-          setCards(
-            nextCards.map(card =>
-              openCardsWithoutPair.some(openCard => openCard.id === card.id) ? { ...card, open: false } : card,
-            ),
-          );
-        }, 1000); // Задержка в 1 секунду, чтобы игрок успел увидеть вторую карту
+        finishGame(STATUS_LOST); // Завершаем игру при одной ошибке в сложном режиме
       }
       return;
     }
-
     // ... игра продолжается
   };
 
