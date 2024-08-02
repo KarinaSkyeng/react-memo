@@ -32,13 +32,15 @@ export function SelectLevelPage() {
           ))}
         </ul>
         <div className={styles.labelName}>
-          <label className={styles.easyModeLabel}>Легкий режим (3 жизни)</label>
           <input
             type="checkbox"
+            id="easyModeCheckbox"
             checked={isEasyMode}
             onChange={e => setEasyMode(e.target.checked)}
             className={styles.easyModeCheckbox}
           />
+          <label className={styles.easyModeLabel}></label>
+          <span>Легкий режим (3 жизни)</span>
         </div>
         <button className={styles.startButton} onClick={startGame}>
           Играть

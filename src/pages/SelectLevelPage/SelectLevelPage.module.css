@@ -1,12 +1,12 @@
 .container {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 
   width: 100%;
   min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  }
+}
 
 .modal {
   background: #c2f5ff;
@@ -40,9 +40,9 @@
   flex-direction: row;
   gap: 26px;
   margin-top: 48px;
-  margin-bottom: 28px;  
+  margin-bottom: 28px;
 
-  color: #0080C1;
+  color: #0080c1;
   text-align: center;
   font-variant-numeric: lining-nums proportional-nums;
   font-family: Roboto;
@@ -66,8 +66,10 @@
   cursor: pointer;
   padding: 10px;
   margin: 5px;
-  border: 2px solid transparent;  
-  transition: border-color 0.1s, background-color 0.1s;
+  border: 2px solid transparent;
+  transition:
+    border-color 0.1s,
+    background-color 0.1s;
 }
 
 .level:hover {
@@ -76,7 +78,7 @@
 
 .selected {
   text-color: #004980;
-  border-color: #B1B1B1;
+  border-color: #b1b1b1;
   background-color: #ddd;
 }
 
@@ -97,25 +99,43 @@
 
 .labelName {
   display: flex;
-  flex-direction: row-reverse;
-
   font-family: Roboto;
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
-  text-align: center; 
-  gap: 10px; 
+  text-align: center;
+  gap: 10px;
 }
 
 .easyModeCheckbox {
+  display: none;
+}
+
+.easyModeLabel {
+  display: inline-block;
   width: 30px;
-  height: 29px;
-  top: 439px;
-  left: 353px;
-  gap: 0px;
-  border-radius: 4px;
+  height: 30px;
   border: none;
-  opacity: 0px;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  background-color: white; 
+}
+.easyModeLabel::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  color: #7ac100; 
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.1s ease-in-out;
+  border-radius: 2px;
+}
+
+.easyModeCheckbox:checked + .easyModeLabel::after {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .startButton {
@@ -128,12 +148,12 @@
   border-radius: 12px;
   border: none;
   opacity: 0px;
-  background-color: #7AC100;
+  background-color: #7ac100;
 
   font-family: Roboto;
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
 }
