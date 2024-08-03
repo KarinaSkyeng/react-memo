@@ -114,24 +114,24 @@
 .easyModeLabel {
   display: inline-block;
   width: 30px;
-  height: 30px;
+  height: 29px;
   border: none;
   border-radius: 4px;
   position: relative;
   cursor: pointer;
-  background-color: white; 
+  background-color: white;   
 }
 .easyModeLabel::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 20px;
-  height: 20px;
-  color: #7ac100; 
+  width: 30px;
+  height: 29px;
+  background: url('/public/1682744403_papik-pro-p-smail-chekboks-png-32.png') no-repeat center center;
+  background-size: contain;
   transform: translate(-50%, -50%) scale(0);
   transition: transform 0.1s ease-in-out;
-  border-radius: 2px;
 }
 
 .easyModeCheckbox:checked + .easyModeLabel::after {

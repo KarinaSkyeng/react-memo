@@ -230,7 +230,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           />
         ))}
       </div>
-
+      {/* <div className={styles.superBlock}>
+        <div className={styles.superPower}></div>
+        <div className={styles.superModal}>SuperHeroes</div>
+      </div> */}
       {isGameEnded ? (
         <div className={styles.modalContainer}>
           <EndGameModal
