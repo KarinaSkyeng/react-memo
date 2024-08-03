@@ -7,6 +7,8 @@ export function SelectLevelPage() {
   const { isEasyMode, setEasyMode } = useContext(EasyContext);
   const navigate = useNavigate();
   const [selectedLevel, setSelectedLevel] = useState(null);
+  const [checked, setChecked] = useState(isEasyMode);
+  const [level, setLevel] = useState({});
 
   const startGame = () => {
     if (selectedLevel !== null) {
@@ -14,6 +16,16 @@ export function SelectLevelPage() {
     } else {
       alert("Пожалуйста, выберите уровень сложности");
     }
+  };
+
+  const handleInputChangeCheckbox = e => {
+    const { name } = e.target;
+    setChecked(!checked);
+    setLevel({
+      ...level,
+      [name]: !checked,
+    });
+    setEasyMode(!checked);
   };
 
   return (
@@ -35,8 +47,9 @@ export function SelectLevelPage() {
           <input
             type="checkbox"
             id="easyModeCheckbox"
-            checked={isEasyMode}
-            onChange={e => setEasyMode(e.target.checked)}
+            name="easyMode"
+            checked={checked}
+            onChange={handleInputChangeCheckbox}
             className={styles.easyModeCheckbox}
           />
           <label htmlFor="easyModeCheckbox" className={styles.easyModeLabel}></label>
