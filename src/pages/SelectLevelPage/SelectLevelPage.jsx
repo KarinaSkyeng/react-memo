@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
 import { useContext, useState } from "react";
 import { EasyContext } from "../../context/context";
+import { Link } from "react-router-dom";
 
 export function SelectLevelPage() {
   const { isEasyMode, setEasyMode } = useContext(EasyContext);
@@ -58,6 +59,9 @@ export function SelectLevelPage() {
         <button className={styles.startButton} onClick={startGame}>
           Играть
         </button>
+        <Link className={styles.LeaderBoardLink} to="/game/leaderboard">
+          Перейти к лидерборду
+        </Link>
       </div>
     </div>
   );
