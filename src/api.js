@@ -8,3 +8,23 @@ export async function getPlayersList() {
   const data = await response.json();
   return data.leaders;
 }
+
+export async function updateLeaderboard(name, score, time) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({ name, score, time }), // Добавляем поле time в запрос
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Ошибка при обновлении лидерборда:", response.status, errorText);
+      throw new Error(`Не удалось обновить лидерборд: ${response.status} ${errorText}`);
+    }
+
+    console.log("Лидерборд успешно обновлён");
+  } catch (error) {
+    console.error("Ошибка сети или другая ошибка:", error);
+    throw new Error("Не удалось обновить лидерборд");
+  }
+}
