@@ -1,27 +1,77 @@
 import styles from "./EndGameModal.module.css";
-
 import { Button } from "../Button/Button";
-
 import deadImageUrl from "./images/dead.png";
 import celebrationImageUrl from "./images/celebration.png";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { updateLeaderboard } from "../../api";
 
-export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, onClick }) {
-  const title = isWon ? "Вы победили!" : "Вы проиграли!";
-
+export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, gameDurationMinutes, onClick }) {
+  const title = isWon && level <= 2 ? "Вы победили!" : "";
+  const isLeader = isWon && isHardMode && level === 3;
+  const lossTitle = !isWon ? "Вы проиграли!" : "";
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
-
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+
+  const handleSubmit = async () => {
+    console.log("HandleSubmit вызван");
+
+    if (username.trim()) {
+      const score = 100;
+      const timeInSeconds = gameDurationMinutes * 60 + gameDurationSeconds;
+
+      console.log("Имя пользователя перед отправкой:", username);
+      console.log("Тело запроса:", JSON.stringify({ name: username, score, time: timeInSeconds }));
+
+      try {
+        await updateLeaderboard(username, score, timeInSeconds); // Ждём завершения обновления лидерборда
+        navigate("/leaderboard"); // Переход после успешного обновления
+      } catch (error) {
+        console.error("Ошибка при обновлении лидерборда:", error);
+        alert("Не удалось обновить лидерборд, попробуйте снова.");
+      }
+    } else {
+      alert("Введите имя пользователя перед отправкой!");
+    }
+  };
+
+  const handleInputChange = event => {
+    setUsername(event.target.value);
+    console.log("Текущий username:", event.target.value);
+  };
 
   return (
     <div className={styles.modal}>
       <img className={styles.image} src={imgSrc} alt={imgAlt} />
-      <h2 className={styles.title}>{title}</h2>
+      {title && <h2 className={styles.title}>{title}</h2>}
+      {lossTitle && <h2 className={styles.title}>{lossTitle}</h2>}
+      {isLeader && (
+        <div className={styles.modalContainer}>
+          <h3 className={styles.leaderboardModal}>Вы попали на Лидерборд!</h3>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Пользователь"
+            value={username}
+            onChange={handleInputChange}
+          />
+          <button className={styles.submitButton} type="button" onClick={handleSubmit}>
+            Отправить
+          </button>
+        </div>
+      )}
       <p className={styles.description}>Затраченное время:</p>
       <div className={styles.time}>
-        {gameDurationMinutes.toString().padStart("2", "0")}.{gameDurationSeconds.toString().padStart("2", "0")}
+        {gameDurationMinutes.toString().padStart("2", "0")}:{gameDurationSeconds.toString().padStart("2", "0")}
       </div>
 
       <Button onClick={onClick}>Начать сначала</Button>
+
+      <Link className={styles.LeaderBoardLink} to="/leaderboard">
+        Перейти к лидерборду
+      </Link>
     </div>
   );
 }
