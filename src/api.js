@@ -9,11 +9,11 @@ export async function getPlayersList() {
   return data.leaders;
 }
 
-export async function updateLeaderboard(name, score, time) {
+export async function updateLeaderboard(name, score, time, achievements) {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ name, score, time }), // Добавляем поле time в запрос
+      body: JSON.stringify({ name, score, time, achievements }), // Добавляем поле time в запрос
     });
 
     if (!response.ok) {

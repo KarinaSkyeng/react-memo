@@ -1,11 +1,12 @@
 import { shuffle } from "lodash";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
-import { EasyContext } from "../../context/context";
+import { useEasyContext } from "../../hook/useEasyContext"; // Импортируем хук
+import { updateLeaderboard } from "../../api";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -22,11 +23,9 @@ function getTimerValue(startDate, endDate) {
       seconds: 0,
     };
   }
-
   if (endDate === null) {
     endDate = new Date();
   }
-
   const diffInSecconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
   const minutes = Math.floor(diffInSecconds / 60);
   const seconds = diffInSecconds % 60;
@@ -36,35 +35,45 @@ function getTimerValue(startDate, endDate) {
   };
 }
 
-/**
- * Основной компонент игры, внутри него находится вся игровая механика и логика.
- * pairsCount - сколько пар будет в игре
- * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
- */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const isHardMode = pairsCount === 9;
-  const { tries, setTries, isEasyMode } = useContext(EasyContext);
-  // console.log(isEasyMode);
-  // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
+  const { tries, setTries, isEasyMode } = useEasyContext(); // Используем наш хук
   const [cards, setCards] = useState([]);
-  // Текущий статус игры
   const [status, setStatus] = useState(STATUS_PREVIEW);
-
-  // Дата начала игры
   const [gameStartDate, setGameStartDate] = useState(null);
-  // Дата конца игры
   const [gameEndDate, setGameEndDate] = useState(null);
-
-  // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
   });
 
+  const [achievements, setAchievements] = useState([]);
+
+  const handleGameEnd = isWon => {
+    const playerName = "Player"; // Получаем имя игрока (в будущем можно получить из контекста или пропсов)
+    const totalTime = timer.minutes * 60 + timer.seconds; // Подсчет времени
+
+    // Добавляем ачивку за выигрыш
+    if (isWon) {
+      setAchievements(prev => [...prev, "win"]);
+    }
+
+    // Обновляем лидерборд
+    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, achievements)
+      .then(() => {
+        console.log("Результаты игры успешно отправлены");
+      })
+      .catch(error => {
+        console.error("Ошибка при отправке результатов игры:", error);
+      });
+  };
+
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
+    handleGameEnd(status === STATUS_WON);
   }
+
   function startGame() {
     const startDate = new Date();
     setGameEndDate(null);
@@ -72,21 +81,16 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
   }
+
   function resetGame() {
     setGameStartDate(null);
     setGameEndDate(null);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
-    setTries(3); // Сброс количества попыток при перезапуске игры
+    setTries(3);
+    setAchievements([]);
   }
 
-  /**
-   * Обработка основного действия в игре - открытие карты.
-   * После открытия карты игра может пепереходит в следующие состояния
-   * - "Игрок выиграл", если на поле открыты все карты
-   * - "Игрок проиграл", если на поле есть две открытые карты без пары
-   * - "Игра продолжается", если не случилось первых двух условий
-   */
   const openCard = clickedCard => {
     // Если карта уже открыта, то ничего не делаем
     if (clickedCard.open) {
@@ -137,22 +141,19 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         if (tries - 1 <= 0) {
           finishGame(STATUS_LOST);
         } else {
-          // Закрываем только карты без пары
           setTimeout(() => {
             setCards(
               nextCards.map(card =>
                 openCardsWithoutPair.some(openCard => openCard.id === card.id) ? { ...card, open: false } : card,
               ),
             );
-          }, 1000); // Задержка в 1 секунду, чтобы игрок успел увидеть вторую карту
+          }, 1000);
         }
       } else {
-        // Сложный режим: закрываем только карты без пары, не уменьшаем количество попыток
-        finishGame(STATUS_LOST); // Завершаем игру при одной ошибке в сложном режиме
+        finishGame(STATUS_LOST);
       }
       return;
     }
-    // ... игра продолжается
   };
 
   const isGameEnded = status === STATUS_LOST || status === STATUS_WON;
