@@ -63,8 +63,16 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       setAchievements(prev => [...prev, "win"]);
     }
 
+    // Логируем достижения перед отправкой
+    console.log("Текущие достижения перед отправкой:", achievements);
+
+    const updatedAchievements = achievements.filter(a => {
+      // Логика для фильтрации достижений
+      return true; // Пример, оставляем все достижения
+    });
+
     // Обновляем лидерборд
-    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, achievements, usedSuperpower)
+    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, updatedAchievements)
       .then(() => {
         console.log("Результаты игры успешно отправлены");
       })
@@ -169,6 +177,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       setIsPaused(true); // Останавливаем таймер
       setCanUsePower(false); // Суперсила используется только один раз
       setUsedSuperpower(true);
+
+      // Обновляем достижения, если суперсила использована
+      setAchievements(prevAchievements => {
+        return prevAchievements.filter(achievement => {
+          // Логика для фильтрации достижений, если суперсила использована
+          // Например, очищаем достижения, если нужно
+          return false; // Пример, убираем все достижения
+        });
+      });
 
       setTimeout(() => {
         setIsRevealed(false);
