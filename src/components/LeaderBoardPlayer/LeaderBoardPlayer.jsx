@@ -1,11 +1,46 @@
+import { useState } from "react";
 import styles from "./LeaderBoardPlayer.module.css";
+import { Puzzle } from "../Puzzle/Puzzle";
+import { Ball } from "../Ball/Ball";
 
-export function LeaderBoardPlayer({ name, time, position }) {
+export function LeaderBoardPlayer({ position, name, achievements = [], time }) {
+  const [isBallVisible, setIsBallVisible] = useState(false);
+  const [isPuzzleVisible, setIsPuzzleVisible] = useState(false);
+
+  const handlePuzzleMouseEnter = () => {
+    setIsPuzzleVisible(true);
+  };
+  const handlePuzzleMouseLeave = () => {
+    setIsPuzzleVisible(false);
+  };
+  const handleBallMouseEnter = () => {
+    setIsBallVisible(true);
+  };
+  const handleBallMouseLeave = () => {
+    setIsBallVisible(false);
+  };
+
   return (
-    <div className={styles.leader_board_container_middle}>
-      <div className={styles.leader_board_container_middle_div1_b}>{position}</div>
-      <div className={styles.leader_board_container_middle_div2_b}>{name}</div>
-      <div className={styles.leader_board_container_middle_div3_b}>{time}</div>
+    <div className={styles.leaderboardPlayerSection}>
+      <div className={styles.leaderboardPlayerPosition}>{position}</div>
+      <div className={styles.leaderboardPlayerUser}>{name}</div>
+      <div className={styles.leaderboardPlayerIcons}>
+        <img
+          src={`${achievements.includes(1) ? "./puzzle_empty.svg" : "./puzzle.svg"}`}
+          alt="puzzle"
+          onMouseEnter={handleBallMouseEnter}
+          onMouseLeave={handleBallMouseLeave}
+        />
+        <img
+          src={`${achievements.includes(2) ? "./magic_ball_empty.svg" : "./magic_ball.svg"}`}
+          alt="ball"
+          onMouseEnter={handlePuzzleMouseEnter}
+          onMouseLeave={handlePuzzleMouseLeave}
+        />
+        {isPuzzleVisible && <Puzzle />}
+        {isBallVisible && <Ball />}
+      </div>
+      <div className={styles.leaderboardPlayerTime}>{time}</div>
     </div>
   );
 }

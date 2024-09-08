@@ -2,6 +2,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
 .leaderboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
   width: 944px;
   margin: 0 auto;
   padding: 26px;
@@ -15,7 +18,7 @@
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .leaderboardTitle{
@@ -32,7 +35,7 @@
   height: 50px;
   border-radius: 12px;
   border-width: 0px;
-  opacity: 0px;
+  opacity: 1px;
   color: #ffffff;
   font-family: Roboto;
   font-size: 24px;
@@ -41,19 +44,19 @@
   text-align: center;
 }
 
-.leadrboardButton:hover {
+.leaderboardButton:hover {
   cursor: pointer;
   background-color: #97de1e;
 }
 
 .leaderboardSection {
-  display: flex;
-  gap: 15px;
   background-color: #FFFFFF;
   border-radius: 12px;
   display: flex;
   padding: 16px 20px;
-  justify-content: space-between;  
+  justify-content: space-between; 
+  gap: 66px;
+  position: relative; 
 }
 
 .leaderbordText {
@@ -96,46 +99,11 @@
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
-  text-align: left;
+  text-align: center;
   color: #999999;
-}
-.leader_board_container_middle_div2_b {
-  font-family: Roboto;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 32px;
-  text-align: left;
-  color: #000000;
-  grid-column: span 5;
-}
-.leader_board_container_middle_div3_b {
-  font-family: Roboto;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 32px;
-  text-align: left;
-  color: #000000;
-  grid-column: span 1;
-}
-.leader_board_container_middle_div4 {
-  font-family: Roboto;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 32px;
-  text-align: left;
-  color: #999999;
-  grid-column: span 4; /* Можно изменить в зависимости от ширины нужной колонки */
 }
 
-.leader_board_container_middle_div4_b {
-  font-family: Roboto;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 32px;
-  text-align: left;
-  color: #000000;
-  grid-column: span 4; /* Можно изменить в зависимости от ширины нужной колонки */
-}
+
 
 
 

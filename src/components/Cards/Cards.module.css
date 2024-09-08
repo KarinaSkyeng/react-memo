@@ -67,13 +67,47 @@
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
-
   margin-bottom: -12px;
 }
 
-.superModal {
-  display: none;
+.insight {
+  display: flex;
+  gap: 15px;
+  position: relative;
+  border: none;
+}
+
+.cardInsight {
+  background-color: #C2F5FF;
+  border: none;
+  cursor: pointer;
+  width: 68px;
+  height: 68px;
+  radius: 50px;
+  opacity: 40;
+}
+
+.counterInsight {
   position: absolute;
-  left: 0;
-  top: 0;
+  background-color: #C2F5FF; 
+  border-radius: 100px;
+  
+  padding: 5px 10px;
+  font-family: Roboto;
+  top: 45px;
+  left: 45px;
+}
+
+
+.attemptСounter {
+  display: flex;
+  gap: 10px;
+  color: red;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-family: Roboto;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 30px;
+  padding-bottom: 10px;
 }

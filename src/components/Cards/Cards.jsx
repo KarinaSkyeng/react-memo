@@ -1,11 +1,11 @@
 import { shuffle } from "lodash";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
-import { useEasyContext } from "../../hook/useEasyContext"; // Импортируем хук
+import { EasyContext } from "../../context/context";
 import { updateLeaderboard } from "../../api";
 
 // Игра закончилась
@@ -37,7 +37,7 @@ function getTimerValue(startDate, endDate) {
 
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const isHardMode = pairsCount === 9;
-  const { tries, setTries, isEasyMode } = useEasyContext(); // Используем наш хук
+  const { tries, setTries, isEasyMode } = useContext(EasyContext);
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState(STATUS_PREVIEW);
   const [gameStartDate, setGameStartDate] = useState(null);
@@ -49,17 +49,22 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   const [achievements, setAchievements] = useState([]);
 
+  const [isRevealed, setIsRevealed] = useState(false); // Состояние для отображения всех карт
+  const [canUsePower, setCanUsePower] = useState(true); // Состояние для использования суперсилы
+  const [isPaused, setIsPaused] = useState(false); // Состояние паузы таймера
+  const [usedSuperpower, setUsedSuperpower] = useState(false);
+
   const handleGameEnd = isWon => {
-    const playerName = "Player"; // Получаем имя игрока (в будущем можно получить из контекста или пропсов)
+    const playerName = "Player";
     const totalTime = timer.minutes * 60 + timer.seconds; // Подсчет времени
 
     // Добавляем ачивку за выигрыш
-    if (isWon) {
+    if (isWon && !usedSuperpower) {
       setAchievements(prev => [...prev, "win"]);
     }
 
     // Обновляем лидерборд
-    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, achievements)
+    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, achievements, usedSuperpower)
       .then(() => {
         console.log("Результаты игры успешно отправлены");
       })
@@ -73,7 +78,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setStatus(status);
     handleGameEnd(status === STATUS_WON);
   }
-
   function startGame() {
     const startDate = new Date();
     setGameEndDate(null);
@@ -81,7 +85,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
   }
-
   function resetGame() {
     setGameStartDate(null);
     setGameEndDate(null);
@@ -89,6 +92,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setStatus(STATUS_PREVIEW);
     setTries(3);
     setAchievements([]);
+    setCanUsePower(true); // Сброс возможности использования суперсилы
   }
 
   const openCard = clickedCard => {
@@ -158,6 +162,21 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   const isGameEnded = status === STATUS_LOST || status === STATUS_WON;
 
+  // Логика для активации суперсилы "Прозрение"
+  const handleReveal = () => {
+    if (canUsePower) {
+      setIsRevealed(true);
+      setIsPaused(true); // Останавливаем таймер
+      setCanUsePower(false); // Суперсила используется только один раз
+      setUsedSuperpower(true);
+
+      setTimeout(() => {
+        setIsRevealed(false);
+        setIsPaused(false); // Возобновляем таймер через 5 секунд
+      }, 5000); // 5 секундное действие
+    }
+  };
+
   // Игровой цикл
   useEffect(() => {
     // В статусах кроме превью доп логики не требуется
@@ -186,13 +205,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // Обновляем значение таймера в интервале
   useEffect(() => {
+    if (isPaused) return;
+
     const intervalId = setInterval(() => {
       setTimer(getTimerValue(gameStartDate, gameEndDate));
     }, 300);
     return () => {
       clearInterval(intervalId);
     };
-  }, [gameStartDate, gameEndDate]);
+  }, [gameStartDate, gameEndDate, isPaused]);
 
   return (
     <div className={styles.container}>
@@ -217,16 +238,36 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
-        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
-        {isEasyMode && <span style={{ color: "red" }}>Количество жизней: {tries}</span>}
-      </div>
 
+        {isEasyMode && (
+          <span className={styles.attemptСounter}>
+            <svg width="30" height="26" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M14.53 3.27849C12.6964 1.22519 10.2335 0.000124665 8.08277 0.000124664C4.40879 0.000124663 0.183699 2.06893 -8.96305e-08 8.27535C0.170897 14.3992 6.86026 19.5464 13.2644 24.474C13.7441 24.8432 14.2223 25.2111 14.696 25.5781C14.696 25.5781 14.696 25.5781 14.696 25.578C14.6961 25.5781 14.6961 25.5781 14.6961 25.5781C14.9305 25.3965 15.1655 25.2147 15.4009 25.0326C21.9912 19.9345 28.8473 14.6309 29.0247 8.27535C28.841 2.06893 24.2485 0.00012207 20.5745 0.00012207C18.4238 0.00012207 16.169 1.22519 14.53 3.27849Z"
+                fill="#FF4545"
+              />
+            </svg>
+            {tries}
+          </span>
+        )}
+        {status === STATUS_IN_PROGRESS ? (
+          <>
+            <div className={styles.insight}>
+              <img className={styles.cardInsight} src="../card_insight.png" alt="eye_perk" onClick={handleReveal} />
+              <div className={styles.counterInsight}>{isRevealed}</div>
+            </div>
+            <Button onClick={resetGame}>Начать заново</Button>
+          </>
+        ) : null}
+      </div>
       <div className={styles.cards}>
         {cards.map(card => (
           <Card
             key={card.id}
             onClick={() => openCard(card)}
-            open={status !== STATUS_IN_PROGRESS ? true : card.open}
+            open={isRevealed || status !== STATUS_IN_PROGRESS ? true : card.open}
             suit={card.suit}
             rank={card.rank}
           />

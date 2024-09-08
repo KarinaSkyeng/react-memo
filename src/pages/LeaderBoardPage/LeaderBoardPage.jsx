@@ -55,7 +55,7 @@ export function LeaderBoardPage() {
             key={player.id}
             name={player.name}
             time={`${Math.floor(player.time / 60)}:${(player.time % 60).toString().padStart(2, "0")}`}
-            position={index + 1}
+            position={`# ${index + 1}`}
             achievements={player.achievements}
           />
         ))}
