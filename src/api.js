@@ -26,9 +26,6 @@ export async function updateLeaderboard(name, time, achievements) {
     achievements: achievementIds,
   });
 
-  console.log("Отправляем запрос на обновление лидерборда:");
-  console.log("Тело запроса:", requestBody);
-
   try {
     const response = await fetch(API_URL, {
       method: "POST",
@@ -40,7 +37,6 @@ export async function updateLeaderboard(name, time, achievements) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Ошибка при обновлении лидерборда:", response.status, errorText);
       throw new Error(`Не удалось обновить лидерборд: ${response.status} ${errorText}`);
     }
   } catch (error) {

@@ -6,28 +6,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { updateLeaderboard } from "../../api";
 
-export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, gameDurationMinutes, onClick }) {
+export function EndGameModal({
+  isWon,
+  level,
+  isHardMode,
+  gameDurationSeconds,
+  gameDurationMinutes,
+  onClick,
+  achievements,
+}) {
   const title = isWon && level <= 2 ? "Вы победили!" : "";
   const isLeader = isWon && isHardMode && level === 3;
   const lossTitle = !isWon ? "Вы проиграли!" : "";
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
   const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
 
   const handleSubmit = async () => {
-    console.log("HandleSubmit вызван");
-
     if (username.trim()) {
-      const score = 100;
-      const timeInSeconds = gameDurationMinutes * 60 + gameDurationSeconds;
-
-      console.log("Имя пользователя перед отправкой:", username);
-      console.log("Тело запроса:", JSON.stringify({ name: username, score, time: timeInSeconds }));
+      const time = gameDurationMinutes * 60 + gameDurationSeconds;
 
       try {
-        await updateLeaderboard(username, score, timeInSeconds); // Ждём завершения обновления лидерборда
-        navigate("/leaderboard"); // Переход после успешного обновления
+        await updateLeaderboard(username, time, achievements);
+        navigate("/leaderboard");
       } catch (error) {
         console.error("Ошибка при обновлении лидерборда:", error);
         alert("Не удалось обновить лидерборд, попробуйте снова.");
@@ -39,7 +42,6 @@ export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, ga
 
   const handleInputChange = event => {
     setUsername(event.target.value);
-    console.log("Текущий username:", event.target.value);
   };
 
   return (

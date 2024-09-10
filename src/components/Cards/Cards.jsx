@@ -63,9 +63,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       setAchievements(prev => [...prev, "win"]);
     }
 
-    // Логируем достижения перед отправкой
-    console.log("Текущие достижения перед отправкой:", achievements);
-
     const updatedAchievements = achievements.filter(a => {
       // Логика для фильтрации достижений
       return true; // Пример, оставляем все достижения
@@ -181,9 +178,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       // Обновляем достижения, если суперсила использована
       setAchievements(prevAchievements => {
         return prevAchievements.filter(achievement => {
-          // Логика для фильтрации достижений, если суперсила использована
-          // Например, очищаем достижения, если нужно
-          return false; // Пример, убираем все достижения
+          return false;
         });
       });
 
@@ -299,6 +294,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             gameDurationSeconds={timer.seconds}
             gameDurationMinutes={timer.minutes}
             onClick={resetGame}
+            achievements={achievements}
           />
         </div>
       ) : null}
