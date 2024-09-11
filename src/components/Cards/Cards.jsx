@@ -57,25 +57,26 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const handleGameEnd = isWon => {
     const playerName = "Player";
     const totalTime = timer.minutes * 60 + timer.seconds; // Подсчет времени
+    const cardAchievements = [...achievements];
 
-    // Добавляем ачивку за выигрыш
+    if (isWon && isHardMode) {
+      cardAchievements.push(1); // Ачивка за сложный уровень
+    }
+    // Победа без использования суперсил
     if (isWon && !usedSuperpower) {
-      setAchievements(prev => [...prev, "win"]);
+      cardAchievements.push(2); // Ачивка за победу без суперсил
     }
 
-    const updatedAchievements = achievements.filter(a => {
-      // Логика для фильтрации достижений
-      return true; // Пример, оставляем все достижения
-    });
-
     // Обновляем лидерборд
-    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, updatedAchievements)
+    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, cardAchievements)
       .then(() => {
         console.log("Результаты игры успешно отправлены");
       })
       .catch(error => {
         console.error("Ошибка при отправке результатов игры:", error);
       });
+
+    console.log("Achievements IDs:", cardAchievements);
   };
 
   function finishGame(status = STATUS_LOST) {
@@ -98,6 +99,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTries(3);
     setAchievements([]);
     setCanUsePower(true); // Сброс возможности использования суперсилы
+    setUsedSuperpower(false);
   }
 
   const openCard = clickedCard => {
@@ -174,13 +176,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       setIsPaused(true); // Останавливаем таймер
       setCanUsePower(false); // Суперсила используется только один раз
       setUsedSuperpower(true);
-
-      // Обновляем достижения, если суперсила использована
-      setAchievements(prevAchievements => {
-        return prevAchievements.filter(achievement => {
-          return false;
-        });
-      });
 
       setTimeout(() => {
         setIsRevealed(false);

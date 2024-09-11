@@ -10,20 +10,21 @@ export async function getPlayersList() {
 }
 
 // Получить ID достижений
-function getAchievementIds(achievements) {
-  if (!Array.isArray(achievements)) {
-    return [];
-  }
-  return achievements;
-}
+// function getAchievementIds(achievements) {
+//   if (!Array.isArray(achievements)) {
+//     return [];
+//   }
+//   return achievements;
+// }
 
 export async function updateLeaderboard(name, time, achievements) {
-  const achievementIds = getAchievementIds(achievements);
+  // const achievementIds = getAchievementIds(achievements);
+  // console.log("Achievements IDs in updateLeaderboard:", achievementIds);
 
   const requestBody = JSON.stringify({
     name: name || "Пользователь",
     time,
-    achievements: achievementIds,
+    achievements,
   });
 
   try {

@@ -14,6 +14,7 @@ export function EndGameModal({
   gameDurationMinutes,
   onClick,
   achievements,
+  hasUsedSuperPower,
 }) {
   const title = isWon && level <= 2 ? "Вы победили!" : "";
   const isLeader = isWon && isHardMode && level === 3;
@@ -21,12 +22,24 @@ export function EndGameModal({
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
   const navigate = useNavigate();
-
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState({
+    name: "",
+    time: gameDurationSeconds,
+    achievements: achievements,
+  });
 
   const handleSubmit = async () => {
     if (username.trim()) {
       const time = gameDurationMinutes * 60 + gameDurationSeconds;
+
+      if (isHardMode && !achievements.includes(1)) {
+        achievements.push(1);
+      }
+
+      if (!hasUsedSuperPower && !achievements.includes(2)) {
+        achievements.push(2);
+      }
+      console.log("Achievements IDs before sending:", achievements);
 
       try {
         await updateLeaderboard(username, time, achievements);
