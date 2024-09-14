@@ -22,30 +22,28 @@ export function EndGameModal({
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
   const navigate = useNavigate();
-  const [username, setUsername] = useState({
-    name: "",
-    time: gameDurationSeconds,
-    achievements: achievements,
-  });
+  const [username, setUsername] = useState("");
 
-  const handleSubmit = async () => {
+  const handleGameEnd = async () => {
+    const totalTime = gameDurationMinutes * 60 + gameDurationSeconds;
+    const cardAchievements = [...achievements];
+
+    if (isWon && isHardMode && !cardAchievements.includes(1)) {
+      console.log(achievements);
+      cardAchievements.push(1); // Ачивка за сложный уровень
+    }
+
+    if (isWon && !hasUsedSuperPower && !cardAchievements.includes(2)) {
+      cardAchievements.push(2); // Ачивка за победу без суперсил
+    }
+
     if (username.trim()) {
-      const time = gameDurationMinutes * 60 + gameDurationSeconds;
-
-      if (isHardMode && !achievements.includes(1)) {
-        achievements.push(1);
-      }
-
-      if (!hasUsedSuperPower && !achievements.includes(2)) {
-        achievements.push(2);
-      }
-      console.log("Achievements IDs before sending:", achievements);
-
       try {
-        await updateLeaderboard(username, time, achievements);
+        await updateLeaderboard(username, totalTime, cardAchievements);
+        console.log("Результаты игры успешно отправлены");
         navigate("/leaderboard");
       } catch (error) {
-        console.error("Ошибка при обновлении лидерборда:", error);
+        console.error("Ошибка при отправке результатов игры:", error);
         alert("Не удалось обновить лидерборд, попробуйте снова.");
       }
     } else {
@@ -72,7 +70,7 @@ export function EndGameModal({
             value={username}
             onChange={handleInputChange}
           />
-          <button className={styles.submitButton} type="button" onClick={handleSubmit}>
+          <button className={styles.submitButton} type="button" onClick={handleGameEnd}>
             Отправить
           </button>
         </div>

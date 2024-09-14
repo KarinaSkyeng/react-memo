@@ -23,22 +23,24 @@ export function LeaderBoardPlayer({ position, name, achievements = [], time }) {
   const hasPuzzle = achievements.includes(1);
   const hasBall = achievements.includes(2);
 
+  console.log("Achievements for player", name, achievements);
+
   return (
     <div className={styles.leaderboardPlayerSection}>
       <div className={styles.leaderboardPlayerPosition}>{position}</div>
       <div className={styles.leaderboardPlayerUser}>{name}</div>
       <div className={styles.leaderboardPlayerIcons}>
         <img
-          src={hasPuzzle ? "./puzzle_empty.svg" : "./puzzle.svg"}
+          src={hasPuzzle ? "./puzzle.svg" : "./puzzle_empty.svg"}
           alt="puzzle"
-          onMouseEnter={handleBallMouseEnter}
-          onMouseLeave={handleBallMouseLeave}
-        />
-        <img
-          src={hasBall ? "./magic_ball_empty.svg" : "./magic_ball.svg"}
-          alt="ball"
           onMouseEnter={handlePuzzleMouseEnter}
           onMouseLeave={handlePuzzleMouseLeave}
+        />
+        <img
+          src={hasBall ? "./magic_ball.svg" : "./magic_ball_empty.svg"}
+          alt="ball"
+          onMouseEnter={handleBallMouseEnter}
+          onMouseLeave={handleBallMouseLeave}
         />
         {isPuzzleVisible && <Puzzle />}
         {isBallVisible && <Ball />}

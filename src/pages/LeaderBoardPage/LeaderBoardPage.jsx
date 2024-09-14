@@ -16,7 +16,7 @@ export function LeaderBoardPage() {
     const fetchData = async () => {
       try {
         const data = await getPlayersList();
-        const filteredData = data.sort((a, b) => a.time - b.time);
+        const filteredData = data.sort((a, b) => a.time - b.time).slice(0, 10);
         setLeaderArray(filteredData);
       } catch (err) {
         setError("Не удалось загрузить данные");

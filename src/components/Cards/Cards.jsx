@@ -6,7 +6,6 @@ import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { EasyContext } from "../../context/context";
-import { updateLeaderboard } from "../../api";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -54,35 +53,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [isPaused, setIsPaused] = useState(false); // Состояние паузы таймера
   const [usedSuperpower, setUsedSuperpower] = useState(false);
 
-  const handleGameEnd = isWon => {
-    const playerName = "Player";
-    const totalTime = timer.minutes * 60 + timer.seconds; // Подсчет времени
-    const cardAchievements = [...achievements];
-
-    if (isWon && isHardMode) {
-      cardAchievements.push(1); // Ачивка за сложный уровень
-    }
-    // Победа без использования суперсил
-    if (isWon && !usedSuperpower) {
-      cardAchievements.push(2); // Ачивка за победу без суперсил
-    }
-
-    // Обновляем лидерборд
-    updateLeaderboard(playerName, isWon ? 1 : 0, totalTime, cardAchievements)
-      .then(() => {
-        console.log("Результаты игры успешно отправлены");
-      })
-      .catch(error => {
-        console.error("Ошибка при отправке результатов игры:", error);
-      });
-
-    console.log("Achievements IDs:", cardAchievements);
-  };
-
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
-    handleGameEnd(status === STATUS_WON);
   }
   function startGame() {
     const startDate = new Date();
@@ -290,6 +263,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             gameDurationMinutes={timer.minutes}
             onClick={resetGame}
             achievements={achievements}
+            hasUsedSuperPower={usedSuperpower}
           />
         </div>
       ) : null}
