@@ -6,7 +6,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { updateLeaderboard } from "../../api";
 
-export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, gameDurationMinutes, onClick }) {
+export function EndGameModal({
+  isWon,
+  level,
+  isHardMode,
+  gameDurationSeconds,
+  gameDurationMinutes,
+  onClick,
+  achievements,
+  hasUsedSuperPower,
+}) {
   const title = isWon && level <= 2 ? "Вы победили!" : "";
   const isLeader = isWon && isHardMode && level === 3;
   const lossTitle = !isWon ? "Вы проиграли!" : "";
@@ -15,21 +24,26 @@ export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, ga
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
-  const handleSubmit = async () => {
-    console.log("HandleSubmit вызван");
+  const handleGameEnd = async () => {
+    const totalTime = gameDurationMinutes * 60 + gameDurationSeconds;
+    const cardAchievements = [...achievements];
+
+    if (isWon && isHardMode && !cardAchievements.includes(1)) {
+      console.log(achievements);
+      cardAchievements.push(1); // Ачивка за сложный уровень
+    }
+
+    if (isWon && !hasUsedSuperPower && !cardAchievements.includes(2)) {
+      cardAchievements.push(2); // Ачивка за победу без суперсил
+    }
 
     if (username.trim()) {
-      const score = 100;
-      const timeInSeconds = gameDurationMinutes * 60 + gameDurationSeconds;
-
-      console.log("Имя пользователя перед отправкой:", username);
-      console.log("Тело запроса:", JSON.stringify({ name: username, score, time: timeInSeconds }));
-
       try {
-        await updateLeaderboard(username, score, timeInSeconds); // Ждём завершения обновления лидерборда
-        navigate("/leaderboard"); // Переход после успешного обновления
+        await updateLeaderboard(username, totalTime, cardAchievements);
+        console.log("Результаты игры успешно отправлены");
+        navigate("/leaderboard");
       } catch (error) {
-        console.error("Ошибка при обновлении лидерборда:", error);
+        console.error("Ошибка при отправке результатов игры:", error);
         alert("Не удалось обновить лидерборд, попробуйте снова.");
       }
     } else {
@@ -39,7 +53,6 @@ export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, ga
 
   const handleInputChange = event => {
     setUsername(event.target.value);
-    console.log("Текущий username:", event.target.value);
   };
 
   return (
@@ -57,7 +70,7 @@ export function EndGameModal({ isWon, level, isHardMode, gameDurationSeconds, ga
             value={username}
             onChange={handleInputChange}
           />
-          <button className={styles.submitButton} type="button" onClick={handleSubmit}>
+          <button className={styles.submitButton} type="button" onClick={handleGameEnd}>
             Отправить
           </button>
         </div>
